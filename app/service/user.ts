@@ -1,4 +1,22 @@
+import UserModel from 'app/model/user';
 import { Service } from 'egg';
+import * as bcrypt from 'bcryptjs';
+
+// const mapObject =
+//   (mapper: (v: any, k: string, obj: Record<string, any>) => { k: string; v: any }) =>
+//     (obj: Record<string, any>) =>
+//       Object.keys(obj).map((key: string) => mapper(obj[key], key, obj)).reduce((acc, cur) => {
+//         acc[cur.k] = cur.v;
+//         return acc;
+//       }, {})
+
+const filterKey = (keys: string[]) => (obj: Record<string, any>) => {
+  const copy = { ...obj };
+  keys.forEach(key => delete copy[key])
+  return copy;
+}
+
+const userModel = new UserModel();
 
 export default class UserService extends Service {
   /**
@@ -10,12 +28,12 @@ export default class UserService extends Service {
     email: string;
     password: string;
   }) {
-    // const { ctx } = this;
-    // return ctx.model.User.create(payload);
-    return {
-      _id: '1',
+    const _payload = {
       ...payload,
-    };
+      password: bcrypt.hashSync(payload.password, 10)
+    }
+    const user = userModel.add(_payload);
+    return filterKey(['password'])(user);
   }
 
   /**
@@ -23,25 +41,25 @@ export default class UserService extends Service {
    * @param email 邮箱
    */
   public async findByEmail(
-    // email: string
+    email: string
   ) {
-    // const { ctx } = this;
-    // return ctx.model.User.findOne({ email }).select('+password');
-    return null;
+    const users = userModel.read();
+    const user = users.find(item => item.email === email);
+    if (!user) return null;
+    return {
+      ...user,
+      comparePassword: (password: string) => bcrypt.compareSync(password, user.password),
+    };
   }
 
   /**
    * 查找用户信息
    * @param id 用户ID
    */
-  public async findById(id: string) {
-    // const { ctx } = this;
-    // return ctx.model.User.findById(id);
-    return {
-      _id: id,
-      username: 'test',
-      email: 'test@example.com',
-    };
+  public async findById(id: number) {
+    const user = userModel.read().find(item => item.id === id);
+    if (!user) return user;
+    return filterKey(['password'])(user);
   }
 
   /**

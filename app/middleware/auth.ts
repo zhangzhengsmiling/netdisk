@@ -4,8 +4,11 @@ export default () => {
   return async function auth(ctx: Context, next: () => Promise<any>) {
     let token = '';
 
+    console.log(ctx.headers.authorization, 'asdfasdfasdf')
     if (ctx.headers.authorization && ctx.headers.authorization.startsWith('Bearer')) {
       token = ctx.headers.authorization.split(' ')[1];
+    } else {
+      token = ctx.headers.authorization || ''
     }
 
     if (!token) {

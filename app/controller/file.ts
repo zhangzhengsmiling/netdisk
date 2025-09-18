@@ -2,11 +2,6 @@ import { Controller } from 'egg';
 import { FileSystem } from 'netdisk_base';
 import * as path from 'path';
 
-// interface FileUploadResult {
-//   filepath: string;
-//   filename: string;
-// }
-
 export default class FileController extends Controller {
   private fileSystem: FileSystem;
 

@@ -1,98 +1,65 @@
-import { Controller } from 'egg';
+import { Context, Controller } from 'egg';
+
+class ContextResponse {
+  private context: Context;
+  constructor(context: Context) {
+    this.context = context
+  }
+
+  public sendError(error: string, status = 400) {
+    this.context.status = status;
+    this.context.body = {
+      success: false,
+      error,
+    };
+  }
+
+  public sendSuccess(data: any, status = 200) {
+    this.context.status = status;
+    this.context.body = {
+      success: true,
+      data,
+    };
+  }
+}
 
 export default class UserController extends Controller {
   public async register() {
     const { ctx } = this;
-    const { username, email } = ctx.request.body;
-
-    // // 创建用户
-    // const user = await ctx.service.user.create({
-    //   username,
-    //   email,
-    //   password,
-    // });
-
-    // 临时用户数据
-    const user = {
-      _id: '1',
+    const contextResponse = new ContextResponse(ctx);
+    const { username, email, password } = ctx.request.body;
+    if (!username || !email || !password) return contextResponse.sendError('请提供用户名、邮箱和密码', 400)
+    const user = await ctx.service.user.create({
       username,
       email,
-    };
+      password,
+    });
 
     // 生成token
-    const token = await ctx.service.user.createToken({ id: user._id });
-
-    ctx.body = {
-      success: true,
-      token,
-    };
+    const token = await ctx.service.user.createToken({ id: user.id });
+    contextResponse.sendSuccess({ token });
   }
 
   public async login() {
     const { ctx } = this;
     const { email, password } = ctx.request.body;
-
+    const contextResponse = new ContextResponse(ctx);
     // 参数验证
-    if (!email || !password) {
-      ctx.status = 400;
-      ctx.body = {
-        success: false,
-        error: '请提供邮箱和密码',
-      };
-      return;
-    }
-
-    // // 查找用户
-    // const user = await ctx.service.user.findByEmail(email);
-    // if (!user) {
-    //   ctx.status = 401;
-    //   ctx.body = {
-    //     success: false,
-    //     error: '用户不存在',
-    //   };
-    //   return;
-    // }
-
-    // // 验证密码
-    // const isMatch = await user.comparePassword(password);
-    // if (!isMatch) {
-    //   ctx.status = 401;
-    //   ctx.body = {
-    //     success: false,
-    //     error: '密码错误',
-    //   };
-    //   return;
-    // }
-
-    // 临时用户数据
-    const user = {
-      _id: '1',
-      email,
-    };
-
+    if (!email || !password) contextResponse.sendError('请提供邮箱和密码', 400)
+    const user = await ctx.service.user.findByEmail(email);
+    if (!user) return contextResponse.sendError('用户不存在', 401)
+    // 验证密码
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) return contextResponse.sendError('密码错误', 401)
     // 生成token
-    const token = await ctx.service.user.createToken({ id: user._id });
-
-    ctx.body = {
-      success: true,
-      token,
-    };
+    const token = await ctx.service.user.createToken({ id: user.id });
+    contextResponse.sendSuccess({ token })
   }
 
   public async getCurrentUser() {
     const { ctx } = this;
-    // const user = await ctx.service.user.findById(ctx.state.user.id);
-
-    // 临时用户数据
-    const user = {
-      _id: ctx.state.user.id,
-      username: 'test',
-      email: 'test@example.com',
-    };
-
-    ctx.body = {
-      success: true,
-      data: user,
-    };
+    const contextResponse = new ContextResponse(ctx);
+    const user = await ctx.service.user.findById(ctx.state.user.id);
+    contextResponse.sendSuccess(user)
   }
 }
