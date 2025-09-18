@@ -1,0 +1,62 @@
+{
+  "name": "netdisk-backend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "egg": {
+    "typescript": true
+  },
+  "scripts": {
+    "start": "eggctl start --daemon --title=egg-server-netdisk-backend",
+    "stop": "eggctl stop --title=egg-server-netdisk-backend",
+    "dev": "egg-bin dev",
+    "test:local": "egg-bin test",
+    "pretest": "npm run clean && npm run lint -- --fix",
+    "test": "egg-bin test",
+    "preci": "npm run clean && npm run lint",
+    "ci": "egg-bin cov",
+    "postci": "npm run prepublishOnly && npm start && npm stop && npm run clean",
+    "lint": "eslint . --ext .ts --cache",
+    "tsc": "tsc",
+    "clean": "tsc -b --clean",
+    "prepublishOnly": "npm run clean && npm run tsc"
+  },
+  "dependencies": {
+    "@eggjs/scripts": "^4.0.0",
+    "@eggjs/tegg": "^3.5.2",
+    "@eggjs/tegg-aop-plugin": "^3.5.2",
+    "@eggjs/tegg-config": "^3.5.2",
+    "@eggjs/tegg-controller-plugin": "^3.5.2",
+    "@eggjs/tegg-eventbus-plugin": "^3.5.2",
+    "@eggjs/tegg-plugin": "^3.5.2",
+    "@eggjs/tegg-schedule-plugin": "^3.5.2",
+    "@eggjs/tracer": "^3.0.0",
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2",
+    "egg": "^4.0.0",
+    "egg-jwt": "^3.1.7",
+    "egg-mongoose": "^4.0.1",
+    "mongoose": "^8.18.1",
+    "netdisk_base": "link:../netdisk_base"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "7",
+    "@eggjs/mock": "6",
+    "@eggjs/tsconfig": "1",
+    "@types/mocha": "10",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "22",
+    "eslint": "8",
+    "eslint-config-egg": "14",
+    "typescript": "5"
+  },
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "MIT"
+}
