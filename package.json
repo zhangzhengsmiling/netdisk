@@ -1,0 +1,25 @@
+{
+  "name": "netdisk_base",
+  "version": "1.0.0",
+  "description": "网盘基础服务能力",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "netdisk_base": "link:",
+    "path-is-inside": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.19",
+    "@types/path-is-inside": "^1.0.2",
+    "typescript": "^5.3.3"
+  }
+}
