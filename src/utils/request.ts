@@ -33,9 +33,15 @@ instance.interceptors.response.use(
   },
 );
 
+interface Response<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
 export async function request<T>(
   url: string,
   options?: AxiosRequestConfig,
-): Promise<T> {
+): Promise<Response<T>> {
   return instance(url, options);
 }
