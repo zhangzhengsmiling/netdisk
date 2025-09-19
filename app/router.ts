@@ -2,7 +2,7 @@ import { Application } from 'egg';
 
 export default (app: Application) => {
   const { controller } = app;
-  
+
   // 用户认证路由
   app.router.post('/api/v1/auth/register', controller.user.register);
   app.router.post('/api/v1/auth/login', controller.user.login);
